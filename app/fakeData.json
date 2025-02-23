@@ -1,0 +1,29 @@
+{
+    "users": [
+      {
+        "user_id": 1,
+        "user_name": "Alice",
+        "habits": [
+          {
+            "habit_id": 123,
+            "name": "Workout",
+            "timeline": {
+              "2024-02-19": true,
+              "2024-02-20": false,
+              "2024-02-21": true
+            }
+          },
+          {
+            "habit_id": 234,
+            "name": "Reading",
+            "timeline": {
+              "2024-02-19": false,
+              "2024-02-20": true,
+              "2024-02-21": false
+            }
+          }
+        ]
+      }
+    ]
+  }
+  
