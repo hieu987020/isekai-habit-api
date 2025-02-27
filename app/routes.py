@@ -1,9 +1,22 @@
-from fastapi import APIRouter
+from fastapi import APIRouter, Depends
+from sqlalchemy.ext.asyncio import AsyncSession
+from database import SessionLocal
+from app.models import User, Habit
 from datetime import datetime, timedelta
 import random
 import uuid
 
 router = APIRouter()
+
+async def get_db():
+    async with SessionLocal() as session:
+        yield session
+
+@router.get("/users")
+async def get_users(db: AsyncSession = Depends(get_db)):
+    result = await db.execute(User.__table__.select())
+    return result.scalars().all()
+
 
 @router.get("/habits")
 def get_habits():

@@ -1,31 +1,29 @@
-# database.py
-from sqlalchemy import create_engine
-from sqlalchemy.orm import sessionmaker
+from sqlalchemy.ext.asyncio import AsyncSession, create_async_engine
+from sqlalchemy.orm import sessionmaker, declarative_base
 from app.models import Base
 import os
 import logging
 from dotenv import load_dotenv
 
-# Load environment variables
+# Load environment variables from .env
 load_dotenv()
 
 # Logging configuration
 logging.basicConfig(level=logging.INFO)
 logger = logging.getLogger(__name__)
 
-DB_USER = os.getenv('DB_USER')
-DB_PASS = os.getenv('DB_PASS')
-DB_HOST = os.getenv('DB_HOST')
-DB_PORT = os.getenv('DB_PORT')
-DB_NAME = os.getenv('DB_NAME')
+DATABASE_URL = os.getenv("DATABASE_URL")
 
-logger.info(f"DB_USER: {DB_USER}, DB_HOST: {DB_HOST}, DB_PORT: {DB_PORT}, DB_NAME: {DB_NAME}")
+if not DATABASE_URL:
+    raise ValueError("❌ DATABASE_URL is not set! Check your .env file.")
 
-DATABASE_URL = f"postgresql://{DB_USER}:{DB_PASS}@{DB_HOST}:{DB_PORT}/{DB_NAME}"
+logger.info(f"✅ Connecting to database at: {DATABASE_URL}")
 
 # Database connection
-engine = create_engine(DATABASE_URL)
-SessionLocal = sessionmaker(autocommit=False, autoflush=False, bind=engine)
+engine = create_async_engine(DATABASE_URL, echo=True)
+SessionLocal = sessionmaker(
+    bind=engine, class_=AsyncSession, expire_on_commit=False
+)
 
 # Create the tables
-Base.metadata.create_all(bind=engine)
+Base = declarative_base()
